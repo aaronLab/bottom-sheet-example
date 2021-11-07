@@ -29,7 +29,7 @@ class LabelViewController: UIViewController {
     
     private func configureView() {
         if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
+            view.backgroundColor = .tertiarySystemBackground
         } else {
             view.backgroundColor = .white
         }

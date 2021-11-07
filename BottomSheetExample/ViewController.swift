@@ -105,6 +105,7 @@ extension ViewController {
             .tap
             .bind { [weak self] in
                 let bottomSheetViewController = MyStackViewBottomSheetViewController()
+                bottomSheetViewController.contentViewBackgroundColor = .orange
                 
                 DispatchQueue.main.async {
                     self?.present(bottomSheetViewController, animated: !false)

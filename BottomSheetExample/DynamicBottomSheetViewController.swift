@@ -1,5 +1,5 @@
 //
-//  BottomSheetViewController.swift
+//  DynamicBottomSheetViewController.swift
 //  BottomSheetExample
 //
 //  Created by Aaron Lee on 2021/11/05.
@@ -12,45 +12,60 @@ import RxGesture
 import SnapKit
 import Then
 
-open class BottomSheetViewController: UIViewController {
+/// Bottom Sheet View Controller
+///
+/// You can easily make a bottom-sheet-styled view controller.
+///
+/// You can also `override` or `set` a bunch of parameters to design your own bottom sheet view controller,
+/// and see their default values respectively when you `option + left` click on the parameters.
+/// - `open var backgroundColor: UIColor`
+/// - `open var backgroundView: UIView`
+/// - `open var contentViewBackgroundColor: UIColor`
+/// - `open var height: CGFloat?`
+/// - `open var contentView: UIView`
+/// - `open var contentViewCornerRadius: CGFloat`
+/// - `open var transitionDuration: CGFloat`
+/// - `open var dismissVelocityThreshold: CGFloat`
+open class DynamicBottomSheetViewController: UIViewController {
     
     // MARK: - Public Properties
     
     /// The background color of the view controller below the content view.
     ///
-    /// - `UIColor.secondarySystemBackground.withAlphaComponent(0.6)` for iOS 13 or later.
     /// - `UIColor.black.withAlphaComponent(0.6)` for others.
-    open var backgroundColor: UIColor {
-        if #available(iOS 13, *) {
-            return .secondarySystemBackground.withAlphaComponent(0.6)
-        }
-        
+    open var backgroundColor: UIColor = {
         return .black.withAlphaComponent(0.6)
-    }
+    }()
     
     /// Background view
     open var backgroundView = UIView()
     
-    /// The background color of the content view
+    /// The background color of the content view.
     ///
     /// Default value
-    /// - `UIColor.systemBackground` for iOS 13 or later.
+    /// - `UIColor.tertiarySystemBackground` for iOS 13 or later.
     /// - `UIColor.white` for others.
-    open var contentViewBackgroundColor: UIColor {
+    open var contentViewBackgroundColor: UIColor = {
         if #available(iOS 13, *) {
-            return .systemBackground
+            return .tertiarySystemBackground
         }
         
         return .white
-    }
+    }()
     
-    /// The height of the content view
+    private var _height: CGFloat? = nil
+    /// The height of the content view.
     ///
     /// Default value is `nil`
     ///
     /// If you set this value explicitly, the height of the content view will be fixed.
     open var height: CGFloat? {
-        return nil
+        get {
+            return _height
+        }
+        set {
+            _height = newValue
+        }
     }
     
     /// Content view
@@ -58,42 +73,77 @@ open class BottomSheetViewController: UIViewController {
     
     /// Corner radius of the content view(top left, top right)
     ///
-    /// Default value is `8.0`
-    open var contentViewCornerRadius: CGFloat {
-        return 16
-    }
+    /// Default value is `16.0`
+    open var contentViewCornerRadius: CGFloat = 16
     
     /// Present / Dismiss transition duration
     ///
     /// Default value is 0.3
-    open var transitionDuration: CGFloat {
-        return 0.3
-    }
+    open var transitionDuration: CGFloat = 0.3
     
     /// Dismiss velocity threshold
     ///
     /// Default value is 500
-    open var dismissVelocityThreshold: CGFloat {
-        return 500
-    }
+    open var dismissVelocityThreshold: CGFloat = 500
     
     // MARK: - Private Properties
     
+    /// Dispose bag for Rx
     private var bag = DisposeBag()
     
+    /// The origin vertical centre of the content view
     private var originCentreY: CGFloat = .zero
     
     // MARK: - Init
     
+    /// Initialize with parameters below.
+    ///
+    /// Default values
+    ///
+    /// - `modalPresentationStyle = .overFullScreen`
+    /// - `modalTransitionStyle = .crossDissolve`
     public init() {
         super.init(nibName: nil, bundle: nil)
         
-        modalPresentationStyle = .overFullScreen
-        modalTransitionStyle = .crossDissolve
+        initPresentationStyle()
+    }
+    
+    /// Initialize with parameters below.
+    ///
+    /// Default values
+    ///
+    /// - `modalPresentationStyle = .overFullScreen`
+    /// - `modalTransitionStyle = .crossDissolve`
+    public init(modalPresentationStyle: UIModalPresentationStyle = .overFullScreen,
+                modalTransitionStyle: UIModalTransitionStyle = .crossDissolve) {
+        super.init(nibName: nil, bundle: nil)
+        
+        initPresentationStyle(modalPresentationStyle: modalPresentationStyle,
+                              modalTransitionStyle: modalTransitionStyle)
+    }
+    
+    public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        
+        initPresentationStyle()
     }
     
     required public init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
+        
+        initPresentationStyle()
+    }
+    
+    /// This method defines of two initial values of the view controller
+    ///
+    /// Default values
+    ///
+    /// - `modalPresentationStyle = .overFullScreen`
+    /// - `modalTransitionStyle = .crossDissolve`
+    open func initPresentationStyle(modalPresentationStyle: UIModalPresentationStyle = .overFullScreen,
+                                    modalTransitionStyle: UIModalTransitionStyle = .crossDissolve) {
+        self.modalPresentationStyle = modalPresentationStyle
+        self.modalTransitionStyle = modalTransitionStyle
     }
     
     // MARK: - Lifecycle
@@ -115,11 +165,14 @@ open class BottomSheetViewController: UIViewController {
         super.viewWillAppear(animated)
         
         DispatchQueue.main.async {
-            self.presentTransition()
+            self.showBottomSheet()
         }
     }
     
-    private func presentTransition() {
+    // MARK: - Helper
+    
+    /// This method shows the bottom sheet animation on `viewWillAppear`
+    open func showBottomSheet() {
         originCentreY = contentView.center.y
         
         let contentViewHeight = contentView.frame.height
@@ -130,13 +183,10 @@ open class BottomSheetViewController: UIViewController {
         }
     }
     
-}
-
-// MARK: - Helper
-
-extension BottomSheetViewController {
-    
-    private func curveTopCorners() {
+    /// This method makes the content view curved.
+    ///
+    /// This is called on `viewDidLayoutSubviews`
+    open func curveTopCorners() {
         let size = CGSize(width: contentViewCornerRadius, height: .zero)
         
         let path = UIBezierPath(roundedRect: contentView.bounds,
@@ -153,16 +203,20 @@ extension BottomSheetViewController {
 
 // MARK: - Layout
 
-extension BottomSheetViewController {
+extension DynamicBottomSheetViewController {
     
-    private func configureView() {
+    /// This method configures the whole view.
+    @objc
+    open func configureView() {
         view.backgroundColor = .clear
         
         layoutBackgroundView()
         layoutContentView()
     }
     
-    private func layoutBackgroundView() {
+    /// This method layouts the background view.
+    @objc
+    open func layoutBackgroundView() {
         backgroundView.backgroundColor = backgroundColor
         
         view.addSubview(backgroundView)
@@ -171,7 +225,11 @@ extension BottomSheetViewController {
         }
     }
     
-    private func layoutContentView() {
+    /// This method layouts the content view.
+    ///
+    /// If the `height` property of the view controller is not `nil`, the height of the content view will be fixed.
+    @objc
+    open func layoutContentView() {
         contentView.backgroundColor = contentViewBackgroundColor
         
         view.addSubview(contentView)
@@ -180,6 +238,7 @@ extension BottomSheetViewController {
             $0.top.lessThanOrEqualToSuperview().priority(.low)
         }
         
+        // Fixd height
         if let height = height {
             contentView.snp.makeConstraints {
                 $0.height.equalTo(height)
@@ -191,13 +250,15 @@ extension BottomSheetViewController {
 
 // MARK: - Bind
 
-extension BottomSheetViewController {
+extension DynamicBottomSheetViewController {
     
+    /// Bind Rx
     private func bindRx() {
         bindBackgroundViewTapGesture()
         bindContentViewPanGesture()
     }
     
+    /// Bind the tap gesture on the background view.
     private func bindBackgroundViewTapGesture() {
         backgroundView
             .rx
@@ -213,7 +274,11 @@ extension BottomSheetViewController {
             .disposed(by: bag)
     }
     
-    private func shouldDismissSheet() {
+    /// This method will dismiss the bottom sheet.
+    ///
+    /// This is called when you tap the background view or swipe down on the content view.
+    @objc
+    open func shouldDismissSheet() {
         let contentViewHeight = contentView.frame.height
         
         UIView.animate(withDuration: transitionDuration) {
@@ -225,6 +290,7 @@ extension BottomSheetViewController {
         
     }
     
+    /// Bind the pan gesture on the content view.
     private func bindContentViewPanGesture() {
         contentView
             .rx
@@ -238,13 +304,11 @@ extension BottomSheetViewController {
             .disposed(by: bag)
     }
     
-    private func verticalVelocity(_ gesture: UIPanGestureRecognizer, in view: UIView) -> CGFloat {
-        let velocity = gesture.velocity(in: view)
-        
-        return velocity.y
-    }
-    
-    private func contentViewDidPan(_ gesture: UIPanGestureRecognizer, in view: UIView) {
+    /// When the content view is panned.
+    ///
+    /// This method is called when you pan the content view.
+    @objc
+    open func contentViewDidPan(_ gesture: UIPanGestureRecognizer, in view: UIView) {
         
         if gesture.state == .changed {
             contentViewPanGestureDidChange(gesture, in: view)
@@ -255,27 +319,48 @@ extension BottomSheetViewController {
         }
     }
     
-    private func contentViewPanGestureDidChange(_ gesture: UIPanGestureRecognizer, in view: UIView) {
+    /// This method is called when the pan gesture on the content view is detected.
+    @objc
+    open func contentViewPanGestureDidChange(_ gesture: UIPanGestureRecognizer, in view: UIView) {
         guard gesture.view != nil else { return }
         
         let translation = gesture.translation(in: view)
         let translatedY = gesture.view!.center.y + translation.y
         
-        if translatedY < originCentreY { return }
+        if translatedY < originCentreY {
+            
+            if gesture.view!.center.y > originCentreY {
+                gesture.view!.center.y = originCentreY
+            }
+            
+            return
+        }
         
-        gesture.view!.center = CGPoint(x: gesture.view!.center.x, y: gesture.view!.center.y + translation.y)
+        gesture.view!.center = CGPoint(x: gesture.view!.center.x, y: translatedY)
         
         gesture.setTranslation(.zero, in: view)
         
         let ratio = (view.center.y - originCentreY) / originCentreY
         let alpha = 1 - ratio
-        UIView.animate(withDuration: transitionDuration) {
-            self.backgroundView.alpha = alpha
-        }
+        dimBackgroundView(alpha)
         
     }
     
-    private func contentViewPanGestureDidEnd(_ gesture: UIPanGestureRecognizer, in view: UIView) {
+    
+    /// This will make change the alpha of the background view.
+    ///
+    ///
+    /// - Parameter proportion: The alpha value of the background view.
+    @objc
+    open func dimBackgroundView(_ proportion: CGFloat) {
+        UIView.animate(withDuration: transitionDuration) {
+            self.backgroundView.alpha = proportion
+        }
+    }
+    
+    /// This method is called when the pan gesture is ended.
+    @objc
+    open func contentViewPanGestureDidEnd(_ gesture: UIPanGestureRecognizer, in view: UIView) {
         guard shouldDismiss(gesture, in: view, threshold: dismissVelocityThreshold) else {
             
             DispatchQueue.main.async {
@@ -290,14 +375,26 @@ extension BottomSheetViewController {
         }
     }
     
-    private func shouldDismiss(_ gesture: UIPanGestureRecognizer, in view: UIView, threshold: CGFloat) -> Bool {
+    /// This method will defines if the bottom sheet should be dismissed or not.
+    @objc
+    open func shouldDismiss(_ gesture: UIPanGestureRecognizer, in view: UIView, threshold: CGFloat) -> Bool {
         let verticalVelocity = verticalVelocity(gesture, in: view)
         let movedDownHalf = view.frame.minY >= originCentreY
         
         return verticalVelocity > dismissVelocityThreshold || movedDownHalf
     }
     
-    private func shouldRestoreSheet() {
+    /// This method will returns the vertical velocity of the pan gesture in the content view.
+    @objc
+    open func verticalVelocity(_ gesture: UIPanGestureRecognizer, in view: UIView) -> CGFloat {
+        let velocity = gesture.velocity(in: view)
+        
+        return velocity.y
+    }
+    
+    /// This method will restore the first position of the content view.
+    @objc
+    open func shouldRestoreSheet() {
         UIView.animate(withDuration: transitionDuration) {
             self.contentView.center.y = self.originCentreY
             self.backgroundView.alpha = 1

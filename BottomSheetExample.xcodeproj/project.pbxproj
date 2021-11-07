@@ -13,10 +13,11 @@
 		A4065AF5273558BE00078030 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4065AF4273558BE00078030 /* ViewController.swift */; };
 		A4065AFA273558BF00078030 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A4065AF9273558BF00078030 /* Assets.xcassets */; };
 		A4065AFD273558BF00078030 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A4065AFB273558BF00078030 /* LaunchScreen.storyboard */; };
-		A4065B0527355EA600078030 /* BottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4065B0427355EA600078030 /* BottomSheetViewController.swift */; };
+		A4065B0527355EA600078030 /* DynamicBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4065B0427355EA600078030 /* DynamicBottomSheetViewController.swift */; };
 		A4065B072735638900078030 /* MyBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4065B062735638900078030 /* MyBottomSheetViewController.swift */; };
-		A4065B092735650F00078030 /* ContentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4065B082735650F00078030 /* ContentViewController.swift */; };
+		A4065B092735650F00078030 /* MyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4065B082735650F00078030 /* MyViewController.swift */; };
 		A4065B0B27356A2400078030 /* LabelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4065B0A27356A2400078030 /* LabelViewController.swift */; };
+		A40A985327379F10009CAE9F /* MyStackViewBottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A40A985227379F10009CAE9F /* MyStackViewBottomSheetViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,10 +29,11 @@
 		A4065AF9273558BF00078030 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A4065AFC273558BF00078030 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A4065AFE273558BF00078030 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A4065B0427355EA600078030 /* BottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetViewController.swift; sourceTree = "<group>"; };
+		A4065B0427355EA600078030 /* DynamicBottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicBottomSheetViewController.swift; sourceTree = "<group>"; };
 		A4065B062735638900078030 /* MyBottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyBottomSheetViewController.swift; sourceTree = "<group>"; };
-		A4065B082735650F00078030 /* ContentViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewController.swift; sourceTree = "<group>"; };
+		A4065B082735650F00078030 /* MyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyViewController.swift; sourceTree = "<group>"; };
 		A4065B0A27356A2400078030 /* LabelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabelViewController.swift; sourceTree = "<group>"; };
+		A40A985227379F10009CAE9F /* MyStackViewBottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyStackViewBottomSheetViewController.swift; sourceTree = "<group>"; };
 		E48E01D2A05473C7D76FC7F5 /* Pods_BottomSheetExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_BottomSheetExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E794A8A92293F7DD762363CF /* Pods-BottomSheetExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-BottomSheetExample.debug.xcconfig"; path = "Target Support Files/Pods-BottomSheetExample/Pods-BottomSheetExample.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,10 +91,11 @@
 				A4065AF0273558BE00078030 /* AppDelegate.swift */,
 				A4065AF2273558BE00078030 /* SceneDelegate.swift */,
 				A4065AF4273558BE00078030 /* ViewController.swift */,
+				A4065B0427355EA600078030 /* DynamicBottomSheetViewController.swift */,
 				A4065B062735638900078030 /* MyBottomSheetViewController.swift */,
-				A4065B082735650F00078030 /* ContentViewController.swift */,
+				A4065B082735650F00078030 /* MyViewController.swift */,
 				A4065B0A27356A2400078030 /* LabelViewController.swift */,
-				A4065B0427355EA600078030 /* BottomSheetViewController.swift */,
+				A40A985227379F10009CAE9F /* MyStackViewBottomSheetViewController.swift */,
 				A4065AF9273558BF00078030 /* Assets.xcassets */,
 				A4065AFB273558BF00078030 /* LaunchScreen.storyboard */,
 				A4065AFE273558BF00078030 /* Info.plist */,
@@ -215,11 +218,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				A4065AF5273558BE00078030 /* ViewController.swift in Sources */,
+				A40A985327379F10009CAE9F /* MyStackViewBottomSheetViewController.swift in Sources */,
 				A4065B072735638900078030 /* MyBottomSheetViewController.swift in Sources */,
 				A4065AF1273558BE00078030 /* AppDelegate.swift in Sources */,
-				A4065B0527355EA600078030 /* BottomSheetViewController.swift in Sources */,
+				A4065B0527355EA600078030 /* DynamicBottomSheetViewController.swift in Sources */,
 				A4065B0B27356A2400078030 /* LabelViewController.swift in Sources */,
-				A4065B092735650F00078030 /* ContentViewController.swift in Sources */,
+				A4065B092735650F00078030 /* MyViewController.swift in Sources */,
 				A4065AF3273558BE00078030 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -9,8 +9,9 @@ import UIKit
 import SnapKit
 import RxSwift
 import RxCocoa
+import Then
 
-class ContentViewController: UIViewController {
+class MyViewController: UIViewController {
     
     // MARK: - Private Properties
     
@@ -36,14 +37,14 @@ class ContentViewController: UIViewController {
 
 // MARK: - Layout
 
-extension ContentViewController {
+extension MyViewController {
     
     private func configureView() {
         navigationController?.isNavigationBarHidden = false
-        title = "Content View"
+        title = "My View Controller"
         
         if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemBackground
+            view.backgroundColor = .tertiarySystemBackground
         } else {
             view.backgroundColor = .white
         }
@@ -56,7 +57,8 @@ extension ContentViewController {
         view.addSubview(stackView)
         stackView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
     
@@ -78,7 +80,7 @@ extension ContentViewController {
                 .tap
                 .bind { [weak self] in
                     DispatchQueue.main.async {
-                        let text: String = "Count \(count)"
+                        let text: String = "\(count)"
                         self?.push2LabelViewController(with: text)
                     }
                 }
